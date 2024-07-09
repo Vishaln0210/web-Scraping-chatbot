@@ -3,10 +3,10 @@ from transformers import pipeline
 import requests
 from bs4 import BeautifulSoup
 
-# Load the spaCy model
+
 nlp = spacy.load("en_core_web_sm")
 
-# Load the question-answering pipeline
+
 q_pipe = pipeline("question-answering")
 
 def fetch_website_text(url):
@@ -37,13 +37,12 @@ def main():
     website_text = fetch_website_text(url)
 
     if website_text:
-        # Process the website text with spaCy to extract relations
+   
         doc = nlp(website_text)
 
-        # List to store relations with explanations
         relations = []
 
-        # Extract and explain relations in the text
+ 
         for sent in doc.sents:
             for ent in sent.ents:
                 if ent.label_ in ["PERSON", "ORG", "GPE", "DATE", "NORP"]:
@@ -51,13 +50,12 @@ def main():
                         if token.dep_ in ["attr", "nsubj", "dobj", "pobj", "conj", "appos", "acl", "relcl"]:
                             relations.append((ent.text, token.text, sent.text))
 
-        # Print relations with explanations
+
         print("Relations in Website Text:")
         for name, rela, context in relations:
             print(f"Relation: {name} -> {rela}")
             print(f"Explanation: '{name}' is related to '{rela}' in the context of '{context}'\n")
 
-        # Answer questions based on the extracted context
         while True:
             question = input("Enter a Question (or 'exit' to quit): ").strip()
 
@@ -65,7 +63,6 @@ def main():
                 print("Goodbye!")
                 break
 
-            # Answer the question using the question-answering pipeline
             answer = answer_question(question, website_text)
             if answer:
                 print(f"Answer: {answer}\n")
